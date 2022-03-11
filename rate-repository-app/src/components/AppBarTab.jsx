@@ -3,7 +3,7 @@ import Text from './Text';
 
 const styles = StyleSheet.create({
   text: {
-    padding: 5,
+    padding: 7,
     borderColor: '#fffaf0',
     borderStyle: 'solid',
     // borderLeftWidth: 2,

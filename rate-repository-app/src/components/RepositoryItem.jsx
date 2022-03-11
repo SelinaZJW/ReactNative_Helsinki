@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    height: 100,
+    // height: 100,
   },
   headerAvatorContainer: {
     alignContent: 'flex-start',
@@ -25,12 +25,16 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     justifyContent: 'space-evenly',
     alignItems: 'baseline',
-    maxWidth: '95%'  //so that text would wrap within a child
+    maxWidth: '90%'  //so that text would wrap within a child
+  },
+  headerInfoSingle: {
+    marginBottom: 10,
   },
   languageTab: {
     backgroundColor: '#008080',
     borderRadius: 8,
-    padding: 5
+    padding: 5,
+    marginBottom: 8,
   }, 
   dataContainer: {
     flexDirection: 'row',
@@ -69,9 +73,9 @@ const RepositoryItem = ({ repository }) => {
           <Image style={styles.tinyAvator} source={{url: repository.ownerAvatarUrl}}/>
         </View>
         <View style={styles.headerInfoContainer}>
-          <Text fontWeight="bold" fontSize="subheading">{repository.fullName}</Text>
-          <Text color='textSecondary'>{repository.description}</Text>
-          <Text color='textTab' style={styles.languageTab}>{repository.language}</Text>
+          <Text fontWeight="bold" fontSize="subheading" style={styles.headerInfoSingle}>{repository.fullName}</Text>
+          <Text color='textSecondary'style={styles.headerInfoSingle}>{repository.description}</Text>
+          <Text color='textTab' style={styles.languageTab} >{repository.language}</Text>
         </View>
       </View>
 
