@@ -5,17 +5,20 @@ import { Link } from 'react-router-native';
 import useCurrentUser from '../hooks/useCurrentUser';
 import useAuthStorage from '../hooks/useAuthStorage';
 import { useApolloClient } from '@apollo/client';
+import { useNavigate } from 'react-router-native';
 
 const AppBar = () => {
   const authStorage = useAuthStorage();
   const apolloClient = useApolloClient();
+  const navigate = useNavigate();
   const { currentUser } = useCurrentUser();
   console.log(currentUser)
 
-  const handleSignOut = (event) => {
-    event.preventDefault();
-    authStorage.removeAccessToken();
+  const handleSignOut = async () => {
+
+    await authStorage.removeAccessToken();
     apolloClient.resetStore();
+    navigate('/');
   }
 
   const styles = StyleSheet.create({

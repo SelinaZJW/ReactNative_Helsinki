@@ -15,12 +15,7 @@ const validationSchema = yup.object().shape({
     .required('Password is required'),
 });
 
-
-const SignIn = () => {
-  const [ signIn ] = useSignIn();
-  const navigate = useNavigate();
-
-  const initialValues = {
+const initialValues = {
     username: '',
     password: ''
   }
@@ -56,6 +51,30 @@ const SignIn = () => {
     }
   })
 
+export const SignInContainer = ({ onSubmit }) => {
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+      
+      {({ handleSubmit } ) => 
+      <View style={styles.formikContainer}>
+        <FormikTextInput name='username' placeholder='Username'  />
+        <FormikTextInput name='password' placeholder='Password' secureTextEntry={true} />
+        <Pressable onPress={handleSubmit} style={styles.button}>
+          <Text color='textTab' fontWeight='bold' fontSize='subheading' style={{textAlign: 'center'}} >
+            Sign in
+          </Text>
+        </Pressable>
+      </View>
+      }
+
+    </Formik>
+  );
+}
+const SignIn = () => {
+  const [ signIn ] = useSignIn();
+  const navigate = useNavigate();
+
   const onSubmit = async (values) => {
     const { username, password } = values;
     const credentials = {username: username, password: password};
@@ -75,21 +94,22 @@ const SignIn = () => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+    <SignInContainer onSubmit={onSubmit} />
+    // <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
       
-      {({ handleSubmit } ) => 
-      <View style={styles.formikContainer}>
-        <FormikTextInput name='username' placeholder='Username'  />
-        <FormikTextInput name='password' placeholder='Password' secureTextEntry={true} />
-        <Pressable onPress={handleSubmit} style={styles.button}>
-          <Text color='textTab' fontWeight='bold' fontSize='subheading' style={{textAlign: 'center'}} >
-            Sign in
-          </Text>
-        </Pressable>
-      </View>
-      }
+    //   {({ handleSubmit } ) => 
+    //   <View style={styles.formikContainer}>
+    //     <FormikTextInput name='username' placeholder='Username'  />
+    //     <FormikTextInput name='password' placeholder='Password' secureTextEntry={true} />
+    //     <Pressable onPress={handleSubmit} style={styles.button}>
+    //       <Text color='textTab' fontWeight='bold' fontSize='subheading' style={{textAlign: 'center'}} >
+    //         Sign in
+    //       </Text>
+    //     </Pressable>
+    //   </View>
+    //   }
 
-    </Formik>
+    // </Formik>
   );
 };
 

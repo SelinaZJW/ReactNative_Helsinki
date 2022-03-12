@@ -58,7 +58,7 @@ const SingleData = ({ name, value }) => {
 
   return (
     <View style={styles.singleDataContainer}>
-      <Text fontWeight="bold" style={{textAlign: 'center'}}>{formattedValue}</Text>
+      <Text fontWeight="bold" style={{textAlign: 'center'}}  >{formattedValue}</Text>
       <Text color='textSecondary'>{name}</Text>
     </View>
   );
@@ -66,7 +66,7 @@ const SingleData = ({ name, value }) => {
 
 const RepositoryItem = ({ repository }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="repositoryItem">
 
       <View style={styles.headerContainer}>
         <View style={styles.headerAvatorContainer}>
@@ -79,12 +79,12 @@ const RepositoryItem = ({ repository }) => {
         </View>
       </View>
 
-      <View style={styles.dataContainer}>
+      <View style={styles.dataContainer} testID = 'data'>
         {/* <View style={styles.singleDataContainer}>
           <Text>{repository.stargazersCount}</Text>
           <Text>Stars</Text>
         </View> */}
-        <SingleData name='Stars' value={repository.stargazersCount} />
+        <SingleData name='Stars' value={repository.stargazersCount}  />
         <SingleData name='Forks' value={repository.forksCount}  />
         <SingleData name='Reviews' value={repository.reviewCount}  />
         <SingleData name='Rating' value={repository.ratingAverage}  />

@@ -58,6 +58,26 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
+export const RepositoryListContainer = ({ repositories }) => {
+  const repositoryNodes = repositories 
+    ? repositories.edges?.map(edge => edge.node)
+    : [];
+
+  console.log(repositories)
+  console.log(repositoryNodes)
+
+  return (
+    <FlatList
+      // data={repositories}
+      data={repositoryNodes}
+      ItemSeparatorComponent={ItemSeparator}
+      renderItem={({item}) => <RepositoryItem repository={item} />}
+      keyExtractor={(item) => item.id}
+      
+    />
+  );
+}
+
 const RepositoryList = () => {
   const { repositories } = useRepositories();
   // const [repositories, setRepositories] = useState();
@@ -76,23 +96,26 @@ const RepositoryList = () => {
   // }, []);
 
   // Get the nodes from the edges array
-  const repositoryNodes = repositories 
-    ? repositories.edges?.map(edge => edge.node)
-    : [];
+  // const repositoryNodes = repositories 
+  //   ? repositories.edges?.map(edge => edge.node)
+  //   : [];
 
-  console.log(repositories)
-  console.log(repositoryNodes)
+  // console.log(repositories)
+  // console.log(repositoryNodes)
 
-  return (
-    <FlatList
-      // data={repositories}
-      data={repositoryNodes}
-      ItemSeparatorComponent={ItemSeparator}
-      renderItem={({item}) => <RepositoryItem repository={item} />}
-      keyExtractor={(item) => item.id}
+  // return (
+  //   <FlatList
+  //     // data={repositories}
+  //     data={repositoryNodes}
+  //     ItemSeparatorComponent={ItemSeparator}
+  //     renderItem={({item}) => <RepositoryItem repository={item} />}
+  //     keyExtractor={(item) => item.id}
       
-    />
-  );
+  //   />
+  // );
+  return (
+    <RepositoryListContainer repositories={repositories} />
+  )
 };
 
 export default RepositoryList;
