@@ -1,120 +1,146 @@
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import RepositoryItem from './RepositoryItem';
-// import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useRepositories from '../hooks/useRepositories';
+import {Picker} from '@react-native-picker/picker';
+import React from 'react';
+import { useDebounce } from 'use-debounce';
 
 const styles = StyleSheet.create({
   separator: {
     height: 10,
   },
+  filter: {
+    height: 30, 
+    paddingLeft: 20, 
+    borderColor: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 15, 
+    color: '#586069',
+    marginBottom: 10
+  }, 
+  searchKeyword: {
+    //width: '95%',
+    height: 30,
+    padding: 20,
+    margin: 20,
+    color: '#586069',
+    borderColor: '#586069',
+    borderWidth: 2,
+    borderRadius: 8
+  }
 });
 
-// const repositories = [
-//   {
-//     id: 'jaredpalmer.formik',
-//     fullName: 'jaredpalmer/formik',
-//     description: 'Build forms in React, without the tears',
-//     language: 'TypeScript',
-//     forksCount: 1589,
-//     stargazersCount: 21553,
-//     ratingAverage: 88,
-//     reviewCount: 4,
-//     ownerAvatarUrl: 'https://avatars2.githubusercontent.com/u/4060187?v=4',
-//   },
-//   {
-//     id: 'rails.rails',
-//     fullName: 'rails/rails',
-//     description: 'Ruby on Rails',
-//     language: 'Ruby',
-//     forksCount: 18349,
-//     stargazersCount: 45377,
-//     ratingAverage: 100,
-//     reviewCount: 2,
-//     ownerAvatarUrl: 'https://avatars1.githubusercontent.com/u/4223?v=4',
-//   },
-//   {
-//     id: 'django.django',
-//     fullName: 'django/django',
-//     description: 'The Web framework for perfectionists with deadlines.',
-//     language: 'Python',
-//     forksCount: 21015,
-//     stargazersCount: 48496,
-//     ratingAverage: 73,
-//     reviewCount: 5,
-//     ownerAvatarUrl: 'https://avatars2.githubusercontent.com/u/27804?v=4',
-//   },
-//   {
-//     id: 'reduxjs.redux',
-//     fullName: 'reduxjs/redux',
-//     description: 'Predictable state container for JavaScript apps',
-//     language: 'TypeScript',
-//     forksCount: 13902,
-//     stargazersCount: 52869,
-//     ratingAverage: 0,
-//     reviewCount: 0,
-//     ownerAvatarUrl: 'https://avatars3.githubusercontent.com/u/13142323?v=4',
-//   },
-// ];
+const ChooseFilter = ({setOrderDirection, setOrderBy}) => {
+  const [selectedFilter, setSelectedFilter] = useState('');
+  console.log(selectedFilter)
+  //console.log(orderBy)
+  //console.log(orderDirection)
+
+  const onChange = (itemValue) => {
+    setSelectedFilter(itemValue);
+    
+    if (itemValue === 'latest') {
+      setOrderBy('CREATED_AT')
+      setOrderDirection('DESC')
+    }
+    if (itemValue === 'highRated') {
+      setOrderBy('RATING_AVERAGE')
+      setOrderDirection('DESC')
+    }
+    if (itemValue === 'lowRated') {
+      setOrderBy('RATING_AVERAGE')
+      setOrderDirection('ASC')
+    }
+  }
+
+
+  return (
+    <Picker
+      selectedValue={selectedFilter}
+      onValueChange={onChange}
+      style={styles.filter}
+      >
+      <Picker.Item label="Latest repositories" value="latest" />
+      <Picker.Item label="Highest rated repositories" value="highRated"  />
+      <Picker.Item label="Lowest rated repositories" value="lowRated" />
+    </Picker>
+  )
+}
+
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ repositories }) => {
-  const repositoryNodes = repositories 
+export class RepositoryListContainer extends React.Component {
+  renderHeader = () => {
+    const [text, onChangeText] = React.useState('');
+    const [searchKeyword] = useDebounce(text, 1000);
+    console.log(text)
+    console.log(searchKeyword)
+    const { setSearchKeyword, setOrderDirection, setOrderBy } = this.props
+    //const {text} = this.props;  // this.props contains the component's props
+
+    useEffect(() => {
+      setSearchKeyword(searchKeyword)
+    }, [searchKeyword])
+
+    return (
+      <View >
+        <TextInput 
+          placeholder='Search...' 
+          onChangeText={onChangeText}
+          value={text}
+          style={styles.searchKeyword}
+          />
+        <ChooseFilter setOrderDirection={setOrderDirection} setOrderBy={setOrderBy} />
+      </View>
+    );
+  };
+
+  render() {
+    const {repositories, onEndReach} = this.props
+
+    const repositoryNodes = repositories 
     ? repositories.edges?.map(edge => edge.node)
     : [];
 
-  console.log(repositories)
-  console.log(repositoryNodes)
+    console.log(this.repositories)
+    console.log(repositoryNodes)
 
-  return (
-    <FlatList
-      // data={repositories}
-      data={repositoryNodes}
-      ItemSeparatorComponent={ItemSeparator}
-      renderItem={({item}) => <RepositoryItem repository={item} />}
-      keyExtractor={(item) => item.id}
-      
-    />
-  );
+    return (
+      <FlatList
+        // data={repositories}
+        data={repositoryNodes}
+        ItemSeparatorComponent={ItemSeparator}
+        renderItem={({item}) => <RepositoryItem repository={item} singleView='none' />}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={this.renderHeader}
+        onEndReached={onEndReach}
+        onEndReachedThreshold={0.5}
+        
+      />
+    );
+  }
 }
 
+
+
 const RepositoryList = () => {
-  const { repositories } = useRepositories();
-  // const [repositories, setRepositories] = useState();
+  const [orderDirection, setOrderDirection] = useState(undefined)
+  const [orderBy, setOrderBy] = useState(undefined)
+  const [searchKeyword, setSearchKeyword] = useState(undefined)
+  const first = 8
 
-  // const fetchRepositories = async () => {
-  //   // Replace the IP address part with your own IP address!
-  //   const response = await fetch('http://192.168.1.105:5000/api/repositories');
-  //   const json = await response.json();
-
-  //   console.log(json);
-  //   setRepositories(json);
-  // };
-
-  // useEffect(() => {
-  //   fetchRepositories();
-  // }, []);
-
-  // Get the nodes from the edges array
-  // const repositoryNodes = repositories 
-  //   ? repositories.edges?.map(edge => edge.node)
-  //   : [];
-
-  // console.log(repositories)
-  // console.log(repositoryNodes)
-
-  // return (
-  //   <FlatList
-  //     // data={repositories}
-  //     data={repositoryNodes}
-  //     ItemSeparatorComponent={ItemSeparator}
-  //     renderItem={({item}) => <RepositoryItem repository={item} />}
-  //     keyExtractor={(item) => item.id}
-      
-  //   />
-  // );
+  const { repositories } = useRepositories({ orderDirection, orderBy, searchKeyword, first });
+  const onEndReach = () => {
+    console.log('You have reached the end of the list');
+  };
+  
   return (
-    <RepositoryListContainer repositories={repositories} />
+    <View>
+      {/* <ChooseFilter setOrderDirection={setOrderDirection} setOrderBy={setOrderBy} /> */}
+      <RepositoryListContainer repositories={repositories} onEndReach={onEndReach} setSearchKeyword={setSearchKeyword} setOrderDirection={setOrderDirection} setOrderBy={setOrderBy} />
+    </View>
   )
 };
 

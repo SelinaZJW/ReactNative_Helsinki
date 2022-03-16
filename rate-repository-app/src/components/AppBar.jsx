@@ -34,10 +34,10 @@ const AppBar = () => {
       // ...
     },
     signInDisplay: {
-      display: currentUser? 'none' : ''
+      display: currentUser? 'none' : 'flex'
     },
     signOutDisplay: {
-      display: currentUser? '' : 'none'
+      display: currentUser? 'flex' : 'none'
     }
     
   });
@@ -52,6 +52,14 @@ const AppBar = () => {
 
         <Link to="/signin" style={styles.signInDisplay}>
           <AppBarTab tabLabel='Sign in'  />
+        </Link>
+
+        <Link to='/review' style={styles.signOutDisplay}>
+          <AppBarTab tabLabel='Create a review' />
+        </Link>
+
+        <Link to='/signup' style={styles.signInDisplay}>
+          <AppBarTab tabLabel='Sign up' />
         </Link>
 
         <Pressable onPress={handleSignOut} style={styles.signOutDisplay}>

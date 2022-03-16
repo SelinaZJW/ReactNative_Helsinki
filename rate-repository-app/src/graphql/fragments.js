@@ -14,6 +14,12 @@ export const REPOSITORY_DETAILS = gql`
         description
         id
       }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      startCursor
+      hasNextPage
     }
   }`
 
